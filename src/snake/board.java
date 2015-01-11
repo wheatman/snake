@@ -5,19 +5,19 @@ import java.util.Random;
 public class board {
     
     private static final double TIMESTEP = .05;
-    private int length;
-    private int width;
-    private String[][] grid;
-    private int[] foodSpot;
-    private int[][] snakeSpots;
-    private int snakeLength;
-    private String dir;
+    private static int length;
+    private static int width;
+    static String[][] grid;
+    private static int[] foodSpot;
+    private static int[][] snakeSpots;
+    private static int snakeLength;
+    private static String dir;
     private static boolean dead = false;
 
     public board(int length, int width) {
-        this.length = length;
-        this.width = width;
-        this.dir = "up";
+        board.length = length;
+        board.width = width;
+        board.dir = "up";
         this.grid = new String[length][width];
         this.foodSpot = new int[2];
         Random random = new Random();
@@ -30,25 +30,31 @@ public class board {
                 grid[i][j] = " ";
             }
         }
-        this.snakeSpots = new int[length*width][2];
-        this.snakeSpots[0][0] = width/2;
-        this.snakeSpots[0][1] = length/2;
-        this.snakeLength = 1;
+        board.snakeSpots = new int[length*width][2];
+        board.snakeSpots[0][0] = width/2;
+        board.snakeSpots[0][1] = length/2;
+        board.snakeLength = 1;
 
     }
-    public void spawnFood(){
+    public int getLength(){
+        return length;
+    }
+    public int getWidth(){
+        return width;
+    }
+    public static void spawnFood(){
         Random random = new Random();
         int x = random.nextInt(width);
         int y = random.nextInt(length);
-        this.foodSpot[0] = x;
-        this.foodSpot[1] = y;
+        foodSpot[0] = x;
+        foodSpot[1] = y;
     }
-    public void move() {
+    public static void move() {
         if (snakeLength>2){
-        for (int i = snakeLength; i > 1; i--){
-            snakeSpots[i][0] = snakeSpots[i-1][0];
-            snakeSpots[i][1] = snakeSpots[i-1][1];
-        }
+            for (int i = snakeLength; i > 1; i--){
+                snakeSpots[i][0] = snakeSpots[i-1][0];
+                snakeSpots[i][1] = snakeSpots[i-1][1];
+            }
         }
         if (dir.equals("up")){
             snakeSpots[0][0] = snakeSpots[0][0];
@@ -67,7 +73,7 @@ public class board {
             snakeSpots[0][1] = snakeSpots[0][1]+1;
         }
         if (snakeSpots[0][0] >= width || snakeSpots[0][1]>=length ||
-                snakeSpots[0][0] <= 0 || snakeSpots[0][1]<=0){
+                snakeSpots[0][0] < 0 || snakeSpots[0][1]<0){
             board.die();
         }
     }
@@ -79,7 +85,11 @@ public class board {
     public void turn(String turn){
         dir = turn;
     }
-    public void eat() {
+    public static void eat() {
+        int[] end = snakeSpots[snakeLength-1];
+        snakeLength += 1;
+        board.move();
+        snakeSpots[snakeLength-1] = end;
         
     }
 
@@ -119,10 +129,14 @@ public class board {
         board board = new board(10, 20);
         long startTime = System.currentTimeMillis();
         while (!dead){
-            if ((System.currentTimeMillis() - startTime) % (1000*TIMESTEP) == 0) {
+            if ((System.currentTimeMillis() - startTime) % (100*TIMESTEP) == 0) {
+                if (snakeSpots[0] == foodSpot){
+                    eat();
+                    spawnFood();                    
+                }
                 System.out.println(board.display());
-                board.move();
-                board.turn("right");
+                snake.board.move();
+
             }
         }  
     }
