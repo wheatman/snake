@@ -10,9 +10,9 @@ public class board {
     static String[][] grid;
     private static int[] foodSpot;
     private static int[][] snakeSpots;
-    private static int snakeLength;
+    static int snakeLength;
     private static String dir;
-    private static boolean dead = false;
+    static boolean dead = false;
 
     public board(int length, int width) {
         board.length = length;
