@@ -5,8 +5,8 @@ import java.util.Random;
 public class board {
     
     private static final double TIMESTEP = .05;
-    private static int length;
-    private static int width;
+    static int length;
+    static int width;
     static String[][] grid;
     private static int[] foodSpot;
     private static int[][] snakeSpots;
@@ -19,12 +19,12 @@ public class board {
         board.width = width;
         board.dir = "up";
         this.grid = new String[length][width];
-        this.foodSpot = new int[2];
+        this.setFoodSpot(new int[2]);
         Random random = new Random();
         int x = random.nextInt(width);
         int y = random.nextInt(length);
-        this.foodSpot[0] = x;
-        this.foodSpot[1] = y;
+        this.getFoodSpot()[0] = x;
+        this.getFoodSpot()[1] = y;
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < width; j++) {
                 grid[i][j] = " ";
@@ -46,8 +46,8 @@ public class board {
         Random random = new Random();
         int x = random.nextInt(width);
         int y = random.nextInt(length);
-        foodSpot[0] = x;
-        foodSpot[1] = y;
+        getFoodSpot()[0] = x;
+        getFoodSpot()[1] = y;
     }
     public static void move() {
         if (snakeLength>2){
@@ -76,6 +76,10 @@ public class board {
                 snakeSpots[0][0] < 0 || snakeSpots[0][1]<0){
             board.die();
         }
+        if (snakeSpots[0][0] == foodSpot[0] || snakeSpots[0][1]==foodSpot[1]){
+            eat();
+            spawnFood();
+        }
     }
     private static void die() {
         System.out.println("you lose");
@@ -100,7 +104,7 @@ public class board {
                 grid[i][j] = " ";
             }
         }
-        grid[foodSpot[1]][foodSpot[0]] = "f";
+        grid[getFoodSpot()[1]][getFoodSpot()[0]] = "f";
         for (int i = 0; i < snakeLength; i ++) {
             grid[snakeSpots[i][1]][snakeSpots[i][0]] = "S";
         }
@@ -130,7 +134,7 @@ public class board {
         long startTime = System.currentTimeMillis();
         while (!dead){
             if ((System.currentTimeMillis() - startTime) % (100*TIMESTEP) == 0) {
-                if (snakeSpots[0] == foodSpot){
+                if (snakeSpots[0] == getFoodSpot()){
                     eat();
                     spawnFood();                    
                 }
@@ -140,6 +144,17 @@ public class board {
             }
         }  
     }
+    public static int[] getFoodSpot() {
+        return foodSpot;
+    }
+    public static void setFoodSpot(int[] foodSpot) {
+        board.foodSpot = foodSpot;
+    }
+    
+    public static int[][] getSnakeSpots() {
+        return snakeSpots;
+    }
+
         
 
 }
