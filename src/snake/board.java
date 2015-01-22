@@ -44,13 +44,13 @@ public class board {
     }
     public static void spawnFood(){
         Random random = new Random();
-        int x = random.nextInt(width);
-        int y = random.nextInt(length);
+        int x = random.nextInt(width-1);
+        int y = random.nextInt(length-1);
         getFoodSpot()[0] = x;
         getFoodSpot()[1] = y;
     }
     public static void move() {
-        if (snakeLength>2){
+        if (snakeLength>=1){
             for (int i = snakeLength; i > 1; i--){
                 snakeSpots[i][0] = snakeSpots[i-1][0];
                 snakeSpots[i][1] = snakeSpots[i-1][1];
@@ -76,7 +76,7 @@ public class board {
                 snakeSpots[0][0] < 0 || snakeSpots[0][1]<0){
             board.die();
         }
-        if (snakeSpots[0][0] == foodSpot[0] || snakeSpots[0][1]==foodSpot[1]){
+        if (snakeSpots[0][0] == foodSpot[0] && snakeSpots[0][1]==foodSpot[1]){
             eat();
             spawnFood();
         }

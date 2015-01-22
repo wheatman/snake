@@ -59,7 +59,6 @@ public class BoardGui extends JFrame {
         
         Graphics2D g2 = (Graphics2D) g;
         for (int i = 0; i < snake.board.snakeLength; i++){
-            System.out.println(i);
             drawRectangle(g2, board.getSnakeSpots()[i][0], board.getSnakeSpots()[i][1],  heightScalar, widthScalar);
         }
         
@@ -86,7 +85,7 @@ public class BoardGui extends JFrame {
     }
 
     public static void main(final String[] args) throws InterruptedException {
-        board board = new board(75, 50);
+        board board = new board(20, 20);
         System.out.println(board.display());
         BoardGui main = new BoardGui(board);
         main.setPreferredSize(new Dimension(550, 700));
@@ -94,7 +93,7 @@ public class BoardGui extends JFrame {
         main.setVisible(true);
         main.setDefaultCloseOperation(EXIT_ON_CLOSE);
         while (!snake.board.dead){
-            //System.out.println(board.display());
+            System.out.println(board.display());
             main.repaint();
             Thread.sleep(250);
             board.move();
