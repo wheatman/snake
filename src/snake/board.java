@@ -13,6 +13,8 @@ public class board {
     static int snakeLength;
     private static String dir;
     static boolean dead = false;
+    private static boolean growing = false;
+    private static boolean turning = false;
 
     public board(int length, int width) {
         board.length = length;
@@ -50,31 +52,46 @@ public class board {
         getFoodSpot()[1] = y;
     }
     public static void move() {
-        if (snakeLength>=1){
-            for (int i = snakeLength; i > 1; i--){
+        turning = false;
+        int[] head = snakeSpots[0];
+        if (!growing){
+                for (int i = snakeLength; i > 0; i--){
+                    snakeSpots[i][0] = snakeSpots[i-1][0];
+                    snakeSpots[i][1] = snakeSpots[i-1][1];
+                }
+        } else {
+            growing = false;
+            
+            for (int i = snakeLength; i == 0; i--){
                 snakeSpots[i][0] = snakeSpots[i-1][0];
                 snakeSpots[i][1] = snakeSpots[i-1][1];
             }
         }
         if (dir.equals("up")){
-            snakeSpots[0][0] = snakeSpots[0][0];
-            snakeSpots[0][1] = snakeSpots[0][1]-1;
+            snakeSpots[0][0] = head[0];
+            snakeSpots[0][1] = head[1]-1;
         }
         if (dir.equals("right")){
-            snakeSpots[0][0] = snakeSpots[0][0]+1;
-            snakeSpots[0][1] = snakeSpots[0][1];
+            snakeSpots[0][0] = head[0]+1;
+            snakeSpots[0][1] = head[1];
         }
         if (dir.equals("left")){
-            snakeSpots[0][0] = snakeSpots[0][0]-1;
-            snakeSpots[0][1] = snakeSpots[0][1];
+            snakeSpots[0][0] = head[0]-1;
+            snakeSpots[0][1] = head[1];
         }
         if (dir.equals("down")){
-            snakeSpots[0][0] = snakeSpots[0][0];
-            snakeSpots[0][1] = snakeSpots[0][1]+1;
+            snakeSpots[0][0] = head[0];
+            snakeSpots[0][1] = head[1]+1;
         }
         if (snakeSpots[0][0] >= width || snakeSpots[0][1]>=length ||
                 snakeSpots[0][0] < 0 || snakeSpots[0][1]<0){
             board.die();
+        }
+        for (int i = snakeLength-1; i >= 1; i--){
+            if (snakeSpots[0][0] == snakeSpots[i][0] && snakeSpots[0][1] == snakeSpots[i][1]){
+                board.die();
+            }
+            
         }
         if (snakeSpots[0][0] == foodSpot[0] && snakeSpots[0][1]==foodSpot[1]){
             eat();
@@ -87,13 +104,24 @@ public class board {
         
     }
     public void turn(String turn){
-        dir = turn;
+        if (!turning) {
+            turning = true;
+            if (turn.equals("up")|| turn.equals("down")){
+                if (dir.equals("right")|| dir.equals("left")) {
+                    dir = turn;
+                }
+            }
+            if (turn.equals("right")|| turn.equals("left")){
+                if (dir.equals("up")|| dir.equals("down")) {
+                    dir = turn;
+                }
+            }
+        }
     }
     public static void eat() {
-        int[] end = snakeSpots[snakeLength-1];
+        growing = true;
         snakeLength += 1;
-        board.move();
-        snakeSpots[snakeLength-1] = end;
+        
         
     }
 

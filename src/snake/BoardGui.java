@@ -1,5 +1,6 @@
 package snake;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -54,16 +55,24 @@ public class BoardGui extends JFrame {
     }
     public void paint(Graphics g) {
         Dimension size = this.getSize();
-        double heightScalar = size.getHeight()/board.length; //multiply every x coordinate or dimension by this scalar
-        double widthScalar = size.getWidth()/board.width; //multiply every y coordinate or dimension by this scalar
+        double heightScalar = size.getHeight()/snake.board.length; //multiply every x coordinate or dimension by this scalar
+        double widthScalar = size.getWidth()/snake.board.width; //multiply every y coordinate or dimension by this scalar
         
         Graphics2D g2 = (Graphics2D) g;
+        clear(g2,size.getWidth(), size.getHeight());
+        g2.setColor(Color.black);
         for (int i = 0; i < snake.board.snakeLength; i++){
-            drawRectangle(g2, board.getSnakeSpots()[i][0], board.getSnakeSpots()[i][1],  heightScalar, widthScalar);
+            drawRectangle(g2, snake.board.getSnakeSpots()[i][0], snake.board.getSnakeSpots()[i][1],  heightScalar, widthScalar);
         }
         
-        drawEllipse(g2, board.getFoodSpot()[0], board.getFoodSpot()[1], heightScalar, widthScalar);
+        drawEllipse(g2, snake.board.getFoodSpot()[0], snake.board.getFoodSpot()[1], heightScalar, widthScalar);
         
+    }
+    private void clear(Graphics2D g2, double width, double height) {
+        g2.setColor(Color.white);
+        Rectangle2D rectangle = new Rectangle2D.Double(0, 0, width, height);
+        g2.draw(rectangle);
+        g2.fill(rectangle);
     }
     private void drawRectangle(Graphics2D g2,int x, int y, double heightScalar, double widthScalar) {
         double xPos = x * widthScalar;
@@ -88,6 +97,7 @@ public class BoardGui extends JFrame {
         board board = new board(20, 20);
         System.out.println(board.display());
         BoardGui main = new BoardGui(board);
+        main.setTitle("Snake");
         main.setPreferredSize(new Dimension(550, 700));
         main.pack();
         main.setVisible(true);
@@ -96,7 +106,7 @@ public class BoardGui extends JFrame {
             System.out.println(board.display());
             main.repaint();
             Thread.sleep(250);
-            board.move();
+            snake.board.move();
         }
         
     }
