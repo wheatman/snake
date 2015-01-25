@@ -1,5 +1,6 @@
 package snake;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -10,6 +11,7 @@ import java.awt.KeyboardFocusManager;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 import java.awt.GridLayout;
@@ -21,93 +23,52 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 public class BoardGui extends JFrame {
-    private board board;
-
+    private static board board;
+    private game game;
+    private JButton button;
     public BoardGui(board board) {
         this.board = board;
-        this.setFocusable(true);
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
-                new KeyEventDispatcher()  { 
-                    public boolean dispatchKeyEvent(KeyEvent e){
-                        if(e.getID() == KeyEvent.KEY_PRESSED){
-                            handleKeyPress(e.getKeyCode());
-                        }
-                        return false;
-                    } 
-            });
+        this.button = new JButton("Restart");
+        button.setHorizontalAlignment(button.CENTER);
+        this.game = new game(board);
+        this.add(button, BorderLayout.NORTH);
+        this.add(game, BorderLayout.CENTER);
     }
-
-    private void handleKeyPress(int keyCode) {
-        switch (keyCode) {
-        case 37:// LEFT KEY
-            board.turn("left");
-            break;
-        case 38:// UP KEY
-            board.turn("up");
-            break;
-        case 39:// RIGHT KEY
-            board.turn("right");
-            break;
-        case 40:// DOWN KEY
-            board.turn("down");
-            break;
-        }
-    }
-    public void paint(Graphics g) {
-        Dimension size = this.getSize();
-        double heightScalar = size.getHeight()/snake.board.length; //multiply every x coordinate or dimension by this scalar
-        double widthScalar = size.getWidth()/snake.board.width; //multiply every y coordinate or dimension by this scalar
-        
-        Graphics2D g2 = (Graphics2D) g;
-        clear(g2,size.getWidth(), size.getHeight());
-        g2.setColor(Color.black);
-        for (int i = 0; i < snake.board.snakeLength; i++){
-            drawRectangle(g2, snake.board.getSnakeSpots()[i][0], snake.board.getSnakeSpots()[i][1],  heightScalar, widthScalar);
-        }
-        
-        drawEllipse(g2, snake.board.getFoodSpot()[0], snake.board.getFoodSpot()[1], heightScalar, widthScalar);
-        
-    }
-    private void clear(Graphics2D g2, double width, double height) {
-        g2.setColor(Color.white);
-        Rectangle2D rectangle = new Rectangle2D.Double(0, 0, width, height);
-        g2.draw(rectangle);
-        g2.fill(rectangle);
-    }
-    private void drawRectangle(Graphics2D g2,int x, int y, double heightScalar, double widthScalar) {
-        double xPos = x * widthScalar;
-        double yPos = y * heightScalar;
-        double width = widthScalar;
-        double height = heightScalar;
-        Rectangle2D rectangle = new Rectangle2D.Double(xPos, yPos, width, height);
-        g2.draw(rectangle);
-        g2.fill(rectangle);
-    }
-    private void drawEllipse(Graphics2D g2,int x, int y, double heightScalar, double widthScalar) {
-        double xPos = x * widthScalar;
-        double yPos = y * heightScalar;
-        double width = widthScalar;
-        double height = heightScalar;
-        Ellipse2D ellipse = new Ellipse2D.Double(xPos, yPos, width, height);
-        g2.draw(ellipse);
-        g2.fill(ellipse);
-    }
-
+    
     public static void main(final String[] args) throws InterruptedException {
-        board board = new board(20, 20);
-        System.out.println(board.display());
-        BoardGui main = new BoardGui(board);
-        main.setTitle("Snake");
-        main.setPreferredSize(new Dimension(550, 700));
-        main.pack();
-        main.setVisible(true);
-        main.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        board board = new board(9, 17);
+        //board board = new board(30, 45);
+        BoardGui game = new BoardGui(board);
+        game.setTitle("Snake");
+        game.setPreferredSize(new Dimension(550, 700));
+        game.pack();
+        game.setVisible(true);
+        game.setDefaultCloseOperation(EXIT_ON_CLOSE);
         while (!snake.board.dead){
             System.out.println(board.display());
-            main.repaint();
+            game.repaint();
             Thread.sleep(250);
             snake.board.move();
         }
+        game.button.setText("You lose, click here to play again");
+//        game.button.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                try {
+//                    game.button.setText("restart");
+//                    while (!snake.board.dead){
+//                        System.out.println(board.display());
+//                        game.repaint();
+//                        Thread.sleep(250);
+//                        snake.board.move();
+//                    }
+//                    board.restart();
+//                    game.button.setText("You lose, click here to play again");
+//                } catch (InterruptedException e1) {
+//                    // TODO Auto-generated catch block
+//                    e1.printStackTrace();
+//                }
+//            }
+//        });
         
     }
 }
